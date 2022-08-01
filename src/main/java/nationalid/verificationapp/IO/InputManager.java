@@ -7,10 +7,7 @@ import java.util.List;
 
 import nationalid.SegmentedNationalID;
 import nationalid.helpers.FileManager;
-import nationalid.loggers.ConsoleLogger;
-import nationalid.loggers.FileLogger;
 import nationalid.loggers.LogManager;
-import nationalid.models.NationalID;
 
 public class InputManager {
 
@@ -23,7 +20,12 @@ public class InputManager {
     public List<SegmentedNationalID> ReadIDsFromFile(LogManager logManager) throws IOException {
 
         String fileContents = FileManager.ReadFromFile(fileName);
-        String[] contentLines = cutContentIntoLines(fileContents);
+        return ReadIDsFromFromString(logManager, fileContents);
+    }
+
+    public static List<SegmentedNationalID> ReadIDsFromFromString(LogManager logManager, String text) {
+
+        String[] contentLines = cutContentIntoLines(text);
 
         return getIDsFromString(logManager, contentLines);
     }
@@ -33,9 +35,7 @@ public class InputManager {
 
         Arrays.stream(lines).forEach(Line -> {
             try {
-                long ID;
-                ID = Long.parseLong(Line);
-                IDList.add(new SegmentedNationalID(ID));
+                IDList.add(ParseSegmentedIDFromString(Line));
             } catch (NumberFormatException ex) {
                 logManager.LogMessage(String.format("Could not parse a number out of line: %s", Line));
             }
@@ -44,7 +44,12 @@ public class InputManager {
         return IDList;
     }
 
-    private String[] cutContentIntoLines(String content) {
+    public static SegmentedNationalID ParseSegmentedIDFromString(String line) throws NumberFormatException {
+        long ID = Long.parseLong(line);
+        return new SegmentedNationalID(ID);
+    }
+
+    public static String[] cutContentIntoLines(String content) {
         // TODO: ensure all types of new liners
         return content.split("\r\n");
     }
