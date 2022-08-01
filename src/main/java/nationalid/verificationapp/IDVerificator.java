@@ -3,7 +3,6 @@ package nationalid.verificationapp;
 import java.util.ArrayList;
 import java.util.List;
 import nationalid.SegmentedNationalID;
-import nationalid.models.NationalID;
 
 public class IDVerificator {
 

@@ -8,6 +8,7 @@ import com.beust.jcommander.JCommander;
 import nationalid.SegmentedNationalID;
 import nationalid.loggers.ConsoleLogger;
 import nationalid.loggers.FileLogger;
+import nationalid.loggers.LogManager;
 import nationalid.verificationapp.Filters.FilterManager;
 import nationalid.verificationapp.Filters.Filterable;
 import nationalid.verificationapp.Filters.GenderFilter;
@@ -28,11 +29,14 @@ public class Main {
         Arguments arguments = new Arguments();
         JCommander.newBuilder().addObject(arguments).build().parse(args);
 
+        LogManager logManager = new LogManager(false, new ConsoleLogger(), new FileLogger());
+
         if (arguments.inputFileName == null)
             throw new RuntimeException("File name is mandatory. Pass the input file name using -i or --input flags.");
 
         InputManager inputManager = new InputManager(arguments.inputFileName);
-        List<SegmentedNationalID> nationalIDs = inputManager.ReadIDsFromFile();
+        List<SegmentedNationalID> nationalIDs = inputManager
+                .ReadIDsFromFile(logManager);
 
         List<Filterable> filters = new ArrayList<>();
         if (arguments.filter != null)
@@ -49,7 +53,7 @@ public class Main {
 
         sortingManager.ApplySort(categorizedList.getCorrect());
 
-        OutputManager outputManager = new OutputManager(new ConsoleLogger(), new FileLogger());
+        OutputManager outputManager = new OutputManager(logManager);
         outputManager.OutputMessage(categorizedList);
     }
 

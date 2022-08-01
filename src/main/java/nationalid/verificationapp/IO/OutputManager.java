@@ -16,8 +16,8 @@ public class OutputManager {
 
     final LogManager logManager;
 
-    public OutputManager(Logable... loggers) {
-        logManager = new LogManager(loggers);
+    public OutputManager(LogManager logManager) {
+        this.logManager = logManager;
     }
 
     private static String generateFileNameforIDs(Boolean valid) {

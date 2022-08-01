@@ -20,15 +20,18 @@ public class InputManager {
         this.fileName = fileName;
     }
 
-    public List<SegmentedNationalID> ReadIDsFromFile() throws IOException {
-        final ArrayList<SegmentedNationalID> IDList = new ArrayList<>();
+    public List<SegmentedNationalID> ReadIDsFromFile(LogManager logManager) throws IOException {
 
         String fileContents = FileManager.ReadFromFile(fileName);
         String[] contentLines = cutContentIntoLines(fileContents);
 
-        LogManager logManager = new LogManager(false, new FileLogger(), new ConsoleLogger());
+        return getIDsFromString(logManager, contentLines);
+    }
 
-        Arrays.stream(contentLines).forEach(Line -> {
+    public static List<SegmentedNationalID> getIDsFromString(LogManager logManager, String... lines) {
+        final ArrayList<SegmentedNationalID> IDList = new ArrayList<>();
+
+        Arrays.stream(lines).forEach(Line -> {
             try {
                 long ID;
                 ID = Long.parseLong(Line);
