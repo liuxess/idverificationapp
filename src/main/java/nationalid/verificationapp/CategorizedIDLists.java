@@ -22,4 +22,11 @@ public class CategorizedIDLists {
         return incorrectIDs;
     }
 
+    public String getResultMessage() {
+        int totalGood = correctIDs.size();
+        int total = totalGood + incorrectIDs.size();
+
+        return String.format("\r\nRecognized %d valid IDs out of %d IDs", totalGood, total);
+    }
+
 }

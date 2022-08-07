@@ -1,45 +1,52 @@
 package nationalid.verificationapp.Filters;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import nationalid.SegmentedNationalID;
+import nationalid.enums.Gender;
 import nationalid.enums.NationalIDSegmentType;
+import nationalid.models.Segments.NationalIDSegmentBase;
 import nationalid.models.Segments.Specific.GenderSegment;
 
 public class GenderFilter implements Filterable {
 
-    Boolean expectingMale;
+    Optional<Gender> expectedGender;
 
-    public GenderFilter(String input) throws Exception {
-        if (input.contentEquals("male") || input.contentEquals("female")) {
-            expectingMale = input.contentEquals("male");
-            return;
-        }
-
-        expectingMale = null;
+    public GenderFilter(Gender expectedGender) {
+        this.expectedGender = Optional.of(expectedGender);
     }
 
-    public GenderFilter(Boolean Male) {
-        expectingMale = Male;
+    public GenderFilter(String input) {
+        this.expectedGender = StringToGender(input);
     }
 
     public Boolean ApplyFilter(SegmentedNationalID ID) {
-        if (expectingMale == null) {
+        if (expectedGender.isEmpty()) {
             return true;
         }
 
-        GenderSegment genderSegment = (GenderSegment) ID.getSegment(NationalIDSegmentType.GENDER);
-        if (genderSegment != null) {
-            return genderSegment.IsMale() == expectingMale;
+        Optional<NationalIDSegmentBase> optionalSegment = ID.getSegment(NationalIDSegmentType.GENDER);
+
+        if (optionalSegment.isEmpty()) {
+            // If You do not have a gender segment, You're definetily not male or female
+            return false;
         }
 
-        // If You do not have a gender segment, You're definetily not male or female
-        return false;
+        GenderSegment genderSegment = (GenderSegment) optionalSegment.get();
+        Optional<Gender> retrievedGender = genderSegment.getGender();
+
+        if (retrievedGender.isEmpty()) {
+            return false;
+        }
+
+        return retrievedGender.get() == expectedGender.get();
     }
 
     @Override
     public List<SegmentedNationalID> ApplyFilter(List<SegmentedNationalID> IDs) {
-        if (expectingMale == null) {
+        if (expectedGender.isEmpty()) {
             return IDs;
         }
 
@@ -47,4 +54,15 @@ public class GenderFilter implements Filterable {
         return IDs;
     }
 
+    private static Optional<Gender> StringToGender(String genderValue) {
+        if (genderValue == null)
+            return Optional.empty();
+        // TODO: this method should normally be provided by the enum
+
+        return switch (genderValue.toLowerCase()) {
+            case "male" -> Optional.of(Gender.MALE);
+            case "female" -> Optional.of(Gender.FEMALE);
+            default -> Optional.empty();
+        };
+    }
 }

@@ -10,6 +10,7 @@ import nationalid.interfaces.Logable;
 import nationalid.loggers.ConsoleLogger;
 import nationalid.loggers.FileLogger;
 import nationalid.loggers.LogManager;
+import nationalid.verificationapp.BatchProcessor;
 import nationalid.verificationapp.CategorizedIDLists;
 
 public class OutputManager {
@@ -20,49 +21,47 @@ public class OutputManager {
         this.logManager = logManager;
     }
 
+    public OutputManager() {
+        this.logManager = LogManager.getGlobalInstance();
+    }
+
     private static String generateFileNameforIDs(Boolean valid) {
         return valid ? "Valid.txt" : "Invalid.txt";
     }
 
-    public void OutputMessage(CategorizedIDLists IDLists) {
-        outputCorrectIDs(IDLists.getCorrect());
-        outputIncorrectIDs(IDLists.getIncorrect());
-
-        int validSize = IDLists.getCorrect().size();
-        int totalSize = validSize + IDLists.getIncorrect().size();
-
-        String outputMessage = String.format("\r\nRecognized %d valid IDs out of %d IDs", validSize, totalSize);
-        System.out.println(outputMessage);
+    public void Output(CategorizedIDLists IDLists) {
+        outputCorrectIDsToFile(IDLists.getCorrect());
+        outputIncorrectIDsToFile(IDLists.getIncorrect());
+        System.out.println(IDLists.getResultMessage());
     }
 
-    private void outputCorrectIDs(List<SegmentedNationalID> IDs) {
+    private void outputCorrectIDsToFile(List<SegmentedNationalID> IDs) {
         final String fileName = generateFileNameforIDs(true);
 
-        if (FileManager.FileExists(fileName))
-            FileManager.DeleteFile(fileName);
+        DeleteFileIfExists(fileName);
 
-        List<String> stringifiedIDs = new ArrayList<>();
-
-        IDs.forEach(ID -> stringifiedIDs.add(String.valueOf(ID.getID().getID())));
+        List<String> stringifiedIDs = BatchProcessor.getIDsFromSegmentation(IDs);
 
         try {
             FileManager.ForceWriteToFile(fileName, String.join("\r\n", stringifiedIDs));
         } catch (IOException ex) {
             logManager.LogMessage(String.format("Failed logging to file %s", fileName), ex);
         }
-
     }
 
-    private void outputIncorrectIDs(List<SegmentedNationalID> IDs) {
+    private void outputIncorrectIDsToFile(List<SegmentedNationalID> IDs) {
         final String fileName = generateFileNameforIDs(false);
 
-        if (FileManager.FileExists(fileName))
-            FileManager.DeleteFile(fileName);
+        DeleteFileIfExists(fileName);
 
         IDs.stream().forEach(ID -> {
+            if (ID == null) {
+                return;
+            }
+
             String outputMessage = String.format(
                     "\r\nID %s has shown the following problems: {\r\n\t%s\r\n}",
-                    ID.getID().getID(),
+                    ID.getNationalID().getID(),
                     String.join("\r\n\t", ID.getProblemList()));
 
             try {
@@ -71,6 +70,12 @@ public class OutputManager {
                 logManager.LogMessage(String.format("Failed logging to file %s", fileName), ex);
             }
         });
+    }
+
+    private void DeleteFileIfExists(String fileName) {
+        if (FileManager.FileExists(fileName))
+            FileManager.DeleteFile(fileName);
+
     }
 
 }

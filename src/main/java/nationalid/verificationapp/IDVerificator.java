@@ -6,16 +6,15 @@ import nationalid.SegmentedNationalID;
 
 public class IDVerificator {
 
-    public CategorizedIDLists VerifyIDs(List<SegmentedNationalID> IDs) {
-        final List<SegmentedNationalID> correctIDs = new ArrayList<>();
-        final List<SegmentedNationalID> incorrectIDs = new ArrayList<>();
+    public static CategorizedIDLists VerifyIDs(List<SegmentedNationalID> IDs) {
+        final ArrayList<SegmentedNationalID> correctIDs;
+        final ArrayList<SegmentedNationalID> incorrectIDs;
 
-        IDs.parallelStream().forEach(segmentedID -> {
-            if (segmentedID.VerifyIntegrity())
-                correctIDs.add(segmentedID);
-            else
-                incorrectIDs.add(segmentedID);
-        });
+        correctIDs = new ArrayList<>(
+                IDs.stream().parallel().filter(segmentedID -> segmentedID.VerifyIntegrity()).toList());
+        incorrectIDs = new ArrayList<>(IDs.stream().parallel().filter(segmentedID -> correctIDs.stream().parallel()
+                .noneMatch(correctID -> segmentedID.getNationalID().getID() == correctID.getNationalID().getID()))
+                .toList());
 
         return new CategorizedIDLists(correctIDs, incorrectIDs);
     }

@@ -1,9 +1,13 @@
 package nationalid.verificationapp.Sorters;
 
 import java.util.List;
+import java.util.Optional;
 
 import nationalid.SegmentedNationalID;
 import nationalid.enums.NationalIDSegmentType;
+import nationalid.models.Segments.NationalIDSegmentBase;
+import nationalid.models.Segments.Specific.BirthDateSegment;
+import nationalid.models.Segments.Specific.GenderSegment;
 
 public class BirthDateSorter implements Sortable {
 
@@ -22,7 +26,6 @@ public class BirthDateSorter implements Sortable {
     public List<SegmentedNationalID> ApplySort(List<SegmentedNationalID> IDs) {
         int invertIfDesc = Ascending ? 1 : -1;
         IDs.sort((firstID, secondID) -> Compare(firstID, secondID) * invertIfDesc);
-
         return IDs;
     }
 
@@ -35,10 +38,29 @@ public class BirthDateSorter implements Sortable {
     }
 
     private int CompareDates(SegmentedNationalID a, SegmentedNationalID b) {
-        int birthDateValueA = a.getSegment(NationalIDSegmentType.BIRTH_DATE).getSegmentValue();
-        int birthDateValueB = b.getSegment(NationalIDSegmentType.BIRTH_DATE).getSegmentValue();
+
+        Optional<NationalIDSegmentBase> optionalBirthDateAValue = a.getSegment(NationalIDSegmentType.BIRTH_DATE);
+        Optional<NationalIDSegmentBase> optionalBirthDateBValue = b.getSegment(NationalIDSegmentType.BIRTH_DATE);
+
+        // If one doesn't have Birth Date,
+        // push down the list as they will likely be incorrect
+        if (optionalBirthDateAValue.isEmpty() || optionalBirthDateBValue.isEmpty())
+            return 0;
+
+        if (optionalBirthDateAValue.isEmpty())
+            return -1; // Send a to the end
+
+        if (optionalBirthDateBValue.isEmpty())
+            return 1; // Send b to the end
+
+        BirthDateSegment birthDateSegmentA = (BirthDateSegment) optionalBirthDateAValue.get();
+        BirthDateSegment birthDateSegmentB = (BirthDateSegment) optionalBirthDateBValue.get();
+
+        int birthDateValueA = birthDateSegmentA.getSegmentValue();
+        int birthDateValueB = birthDateSegmentB.getSegmentValue();
 
         // larger date would always come later
+
         return birthDateValueA - birthDateValueB;
     }
 
@@ -47,29 +69,39 @@ public class BirthDateSorter implements Sortable {
      * 
      * @param a
      * @param b
-     * @return true if a is later, false if b is later, null if they are from the
+     * @return positive if a is later, negative if b is later, 0 if they are from
+     *         the
      *         same age
      */
     private int CompareByCentury(SegmentedNationalID a, SegmentedNationalID b) {
-        // TODO: possibly solvable with XOR predicate on IsMale() and value comparison;
 
-        int GenderAValue = a.getSegment(NationalIDSegmentType.GENDER).getSegmentValue();
-        int GenderBValue = b.getSegment(NationalIDSegmentType.GENDER).getSegmentValue();
+        Optional<NationalIDSegmentBase> optionalGenderAValue = a.getSegment(NationalIDSegmentType.GENDER);
+        Optional<NationalIDSegmentBase> optionalGenderBValue = b.getSegment(NationalIDSegmentType.GENDER);
 
-        // Same value, same century;
-        if (GenderAValue == GenderBValue)
+        // If one doesn't have gender, push down the list as they will likely be
+        // incorrect
+        if (optionalGenderAValue.isEmpty() || optionalGenderBValue.isEmpty())
             return 0;
 
-        // Both less than 5, so 3 and 4 means it's 20th century
-        if (GenderAValue < 5 && GenderBValue < 5)
-            return 0;
+        if (optionalGenderAValue.isEmpty())
+            return -1; // Send a to the end
 
-        // Both less than 4, so 5 and 6 means it's 21st century
-        if (GenderAValue > 4 && GenderBValue > 4)
-            return 0;
+        if (optionalGenderBValue.isEmpty())
+            return 1; // Send b to the end
 
-        // if they are not from the same century, check which is larger
-        return GenderAValue - GenderBValue;
+        GenderSegment genderSegmentA = (GenderSegment) optionalGenderAValue.get();
+        GenderSegment genderSegmentB = (GenderSegment) optionalGenderBValue.get();
+
+        // Check if century is recognizable
+        Optional<Integer> optionalCenturyA = genderSegmentA.getCentury();
+        Optional<Integer> optionalCenturyB = genderSegmentB.getCentury();
+
+        return ZeroIfNotPresent(optionalCenturyA)
+                - ZeroIfNotPresent(optionalCenturyB);
+    }
+
+    private static Integer ZeroIfNotPresent(Optional<Integer> value) {
+        return (value.isPresent() ? value.get() : 0);
     }
 
 }
