@@ -15,6 +15,7 @@ import nationalid.models.Segments.Specific.GenderSegment;
  * 
  * @see Filterable
  * @see FilterManager
+ * @see nationalid.enums.Gender
  */
 public class GenderFilter implements Filterable {
 

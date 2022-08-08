@@ -1,5 +1,6 @@
 package nationalid.verificationapp.Sorters;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,14 +13,14 @@ import nationalid.SegmentedNationalID;
  */
 public class SortingManager {
 
-    private List<Sortable> registeredSorters;
+    private ArrayList<Sortable> registeredSorters;
 
     public SortingManager(List<Sortable> sorters) {
-        registeredSorters = sorters;
+        registeredSorters = new ArrayList<>(sorters);
     }
 
     public SortingManager(Sortable... sorters) {
-        registeredSorters = Arrays.asList(sorters);
+        registeredSorters = new ArrayList<>(Arrays.asList(sorters));
     }
 
     /**

@@ -1,6 +1,5 @@
 package nationalid.verificationapp;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,11 +9,9 @@ import nationalid.SegmentedNationalID;
 import nationalid.loggers.ConsoleLogger;
 import nationalid.loggers.FileLogger;
 import nationalid.loggers.LogManager;
-import nationalid.models.NationalID;
 import nationalid.models.Calculators.GlobalCodeCalculator;
 import nationalid.models.Calculators.LithuanianCodeCalculator;
 import nationalid.verificationapp.Filters.FilterManager;
-import nationalid.verificationapp.Filters.Filterable;
 import nationalid.verificationapp.Filters.GenderFilter;
 import nationalid.verificationapp.IO.Arguments;
 import nationalid.verificationapp.IO.FileInputManager;
