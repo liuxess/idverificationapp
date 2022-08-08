@@ -13,6 +13,9 @@ import nationalid.loggers.LogManager;
 import nationalid.verificationapp.BatchProcessor;
 import nationalid.verificationapp.CategorizedIDLists;
 
+/**
+ * Manages the output after verification
+ */
 public class OutputManager {
 
     final LogManager logManager;
@@ -25,10 +28,19 @@ public class OutputManager {
         this.logManager = LogManager.getGlobalInstance();
     }
 
+    /**
+     * @param valid is the name for valid IDs
+     * @return the name for the file
+     */
     private static String generateFileNameforIDs(Boolean valid) {
         return valid ? "Valid.txt" : "Invalid.txt";
     }
 
+    /**
+     * Will manage the output of the categorized IDs into file and console
+     * 
+     * @param IDLists categorized IDs
+     */
     public void Output(CategorizedIDLists IDLists) {
         outputCorrectIDsToFile(IDLists.getCorrect());
         outputIncorrectIDsToFile(IDLists.getIncorrect());

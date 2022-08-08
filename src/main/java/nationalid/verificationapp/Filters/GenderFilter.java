@@ -10,6 +10,12 @@ import nationalid.enums.NationalIDSegmentType;
 import nationalid.models.Segments.NationalIDSegmentBase;
 import nationalid.models.Segments.Specific.GenderSegment;
 
+/**
+ * Will filter against the gender
+ * 
+ * @see Filterable
+ * @see FilterManager
+ */
 public class GenderFilter implements Filterable {
 
     Optional<Gender> expectedGender;
@@ -22,6 +28,12 @@ public class GenderFilter implements Filterable {
         this.expectedGender = StringToGender(input);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see nationalid.verificationapp.Filters.Filterable#ApplyFilter(nationalid.
+     * SegmentedNationalID)
+     */
     public Boolean ApplyFilter(SegmentedNationalID ID) {
         if (expectedGender.isEmpty()) {
             return true;
@@ -44,6 +56,12 @@ public class GenderFilter implements Filterable {
         return retrievedGender.get() == expectedGender.get();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * nationalid.verificationapp.Filters.Filterable#ApplyFilter(java.util.List)
+     */
     @Override
     public List<SegmentedNationalID> ApplyFilter(List<SegmentedNationalID> IDs) {
         if (expectedGender.isEmpty()) {
@@ -54,6 +72,12 @@ public class GenderFilter implements Filterable {
         return IDs;
     }
 
+    /**
+     * tries to conduct a string interpretation of a gender
+     * 
+     * @param genderValue to be parsed
+     * @return Gender if recognized, otherwise empty
+     */
     private static Optional<Gender> StringToGender(String genderValue) {
         if (genderValue == null)
             return Optional.empty();

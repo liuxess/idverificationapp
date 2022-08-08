@@ -1,14 +1,12 @@
 package nationalid.verificationapp.IO;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import nationalid.SegmentedNationalID;
 import nationalid.helpers.FileManager;
 import nationalid.loggers.LogManager;
 
+/**
+ * Wrapper to read from a file and can cut the contet to lines
+ */
 public class FileInputManager {
 
     private String fileName;
@@ -23,6 +21,9 @@ public class FileInputManager {
         this.fileName = fileName;
     }
 
+    /**
+     * @return file content cut into lines
+     */
     public String[] GetContentFromFile() {
         String content = "";
         try {
@@ -34,6 +35,12 @@ public class FileInputManager {
         return cutContentIntoLines(content);
     }
 
+    /**
+     * Cuts provided string line by line
+     * 
+     * @param content to split
+     * @return array of lines from content
+     */
     public static String[] cutContentIntoLines(String content) {
         // TODO: ensure all types of new liners
         return content.split("\r\n");

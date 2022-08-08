@@ -23,8 +23,11 @@ import nationalid.verificationapp.Sorters.BirthDateSorter;
 import nationalid.verificationapp.Sorters.SortingManager;
 
 /**
- * Hello world!
- *
+ * To be launched with parameters:
+ * <ul>
+ * -in : input file name
+ * -f : (Optional) filtering by gender male|female
+ * -sbd: (Optional, default:asc) sorting by birthdate asc|desc
  */
 public class Main {
 

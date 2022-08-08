@@ -8,27 +8,48 @@ import nationalid.enums.NationalIDSegmentType;
 import nationalid.models.Segments.NationalIDSegmentBase;
 import nationalid.models.Segments.Specific.BirthDateSegment;
 import nationalid.models.Segments.Specific.GenderSegment;
+import nationalid.verificationapp.enums.SortingOrder;
 
+/**
+ * Will control sorting based on the date
+ */
 public class BirthDateSorter implements Sortable {
 
-    private Boolean Ascending;
+    private SortingOrder sortingOrder;
 
+    /**
+     * Will set what Order to set in.
+     * 
+     * @param order to sort in
+     */
     public BirthDateSorter(String order) {
-        // Either the flag is desc, or it's ascending by default anyway
-        this(order == null ? true : !order.contentEquals("desc"));
+        this.sortingOrder = SortingOrder.OutOfString(order);
     }
 
+    /**
+     * @param Ascending whether it should short ascending
+     */
     public BirthDateSorter(Boolean Ascending) {
-        this.Ascending = Ascending;
+        this.sortingOrder = SortingOrder.OutOfBoolean(Ascending);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see nationalid.verificationapp.Sorters.Sortable#ApplySort(java.util.List)
+     */
     @Override
     public List<SegmentedNationalID> ApplySort(List<SegmentedNationalID> IDs) {
-        int invertIfDesc = Ascending ? 1 : -1;
+        int invertIfDesc = sortingOrder.ToInt();
         IDs.sort((firstID, secondID) -> Compare(firstID, secondID) * invertIfDesc);
         return IDs;
     }
 
+    /**
+     * @param a
+     * @param b
+     * @return positive or negative for sorting the compared elements
+     */
     private int Compare(SegmentedNationalID a, SegmentedNationalID b) {
         int centuryComparison = CompareByCentury(a, b);
         if (centuryComparison != 0)
@@ -37,6 +58,12 @@ public class BirthDateSorter implements Sortable {
         return CompareDates(a, b);
     }
 
+    /**
+     * @param a
+     * @param b
+     * @return positive or negative for sorting the compared elements based on
+     *         BirthDates
+     */
     private int CompareDates(SegmentedNationalID a, SegmentedNationalID b) {
 
         Optional<NationalIDSegmentBase> optionalBirthDateAValue = a.getSegment(NationalIDSegmentType.BIRTH_DATE);

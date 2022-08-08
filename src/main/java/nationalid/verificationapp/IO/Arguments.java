@@ -5,6 +5,9 @@ import java.util.List;
 
 import com.beust.jcommander.Parameter;
 
+/**
+ * Class for holding and parsing parameters from the command line
+ */
 public class Arguments {
 
     @Parameter
