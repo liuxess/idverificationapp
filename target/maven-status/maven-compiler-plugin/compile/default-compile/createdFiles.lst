@@ -1,0 +1,14 @@
+nationalid\verificationapp\IO\Arguments.class
+nationalid\verificationapp\Sorters\Sortable.class
+nationalid\verificationapp\Filters\Filterable.class
+nationalid\verificationapp\IO\FileInputManager.class
+nationalid\verificationapp\Filters\FilterManager.class
+nationalid\verificationapp\Main.class
+nationalid\verificationapp\Sorters\SortingManager.class
+nationalid\verificationapp\IDVerificator.class
+nationalid\verificationapp\IO\OutputManager.class
+nationalid\verificationapp\Sorters\BirthDateSorter.class
+nationalid\verificationapp\enums\SortingOrder.class
+nationalid\verificationapp\Filters\GenderFilter.class
+nationalid\verificationapp\BatchProcessor.class
+nationalid\verificationapp\CategorizedIDLists.class

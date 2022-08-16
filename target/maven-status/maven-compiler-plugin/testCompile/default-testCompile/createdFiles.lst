@@ -1,0 +1,13 @@
+nationalid\verificationapp\Sorters\SortingManagerTest.class
+nationalid\verificationapp\Filters\FilterManagerTest.class
+nationalid\verificationapp\IO\ArgumentsTest.class
+nationalid\verificationapp\IO\OutputManagerTest.class
+nationalid\verificationapp\BatchProcessorTest.class
+nationalid\verificationapp\Filters\GenderFilterTest.class
+nationalid\verificationapp\Filters\TestingFiletrable.class
+nationalid\verificationapp\IDVerificatorTest.class
+com\nationalid\verificationapp\AppTest.class
+nationalid\verificationapp\Sorters\TestingSorter.class
+nationalid\verificationapp\Filters\GenderFilterTest$GenderedSegmentedIDs.class
+nationalid\verificationapp\Sorters\BirthDateSorterTest.class
+nationalid\verificationapp\IO\FileInputManagerTest.class

@@ -31,7 +31,8 @@
       <artifactId>nationalid</artifactId>
       <version>0.1</version>
       <scope>system</scope>
-      <systemPath>C:\Users\lukasj\Downloads\telesoftas-java-dev-assignment__1_\demo\target/nationalid-0.01-alpha.jar</systemPath>
+      <!--This needs to be changed to a local reference upon download-->
+      <systemPath>C:\Users\lukasj\Downloads\telesoftas-java-dev-assignment__1_\idverificationapp\dependencies\nationalid-0.01-alpha.jar</systemPath>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/com.beust/jcommander -->
